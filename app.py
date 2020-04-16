@@ -91,7 +91,80 @@ def delete_product(id):
   db.session.delete(product)
   db.session.commit()
 
-  return product_schema.jsonify(product)  
+  return product_schema.jsonify(product)
+
+class users(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(100), unique=True)
+  mail = db.Column(db.String(100))
+  contact = db.Column(db.String(12))
+
+  def __init__(self, id, name, mail, contact):
+    self.id = id      
+    self.name = name
+    self.mail = mail
+    self.contact = contact
+class usersSchema(ma.Schema):
+  class Meta:
+    fields = ('id', 'name', 'mail', 'contact')
+
+users_schema = usersSchema()
+users_schema = usersSchema(many=True)
+
+@app.route('/users', methods=['POST'])
+def add_users():
+  app.logger.info("Request body" + request.json["name"])
+  name = request.json['name']
+  mail = request.json['mail']
+  contact = request.json['contact']
+
+  new_users = users(id, name, mail, contact)
+
+  db.session.add(new_users)
+  db.session.commit()
+
+  return users_schema.jsonify(new_users)
+
+# Get All Products    
+@app.route('/users', methods=['GET'])
+def get_products():
+  all_products = users.query.all()
+  result = users_schema.dump(all_products)
+  return jsonify(result) 
+
+# Get Single Products
+@app.route('/users/<id>', methods=['GET'])
+def get_product(id):
+  product = users.query.get(id)
+  return users_schema.jsonify(product)
+
+# Update a Product
+@app.route('/users/<id>', methods=['PUT'])
+def update_users(id):
+  product = users.query.get(id)
+
+  name = request.json['name']
+  mail = request.json['mail']
+  contact = request.json['contact']
+  
+
+  users.name = name
+  users.mail = mail
+  users.contact = contact
+  
+
+  db.session.commit()
+
+  return users_schema.jsonify(users)
+
+# Delete Product
+@app.route('/users/<id>', methods=['DELETE'])
+def delete_users(id):
+  product = users.query.get(id)
+  db.session.delete(users)
+  db.session.commit()
+
+  return users_schema.jsonify(users)
 
 # Run Server
 if __name__ == '__main__':
