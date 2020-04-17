@@ -34,8 +34,8 @@ class ProductSchema(ma.Schema):
     fields = ('id', 'name', 'description', 'price', 'qty')
 
 # Init schema
-product_schema = ProductSchema()
-products_schema = ProductSchema(many=True)
+product_schema = ProductSchema(strict=True)
+products_schema = ProductSchema(many=True, strict=True)
 
 # Create a Product
 @app.route('/product', methods=['POST'])
@@ -108,8 +108,8 @@ class usersSchema(ma.Schema):
   class Meta:
     fields = ('id', 'name', 'mail', 'contact')
 
-users_schema = usersSchema()
-users_schema = usersSchema(many=True)
+users_schema = usersSchema(strict=True)
+users_schema = usersSchema(many=True, strict=True)
 
 @app.route('/users', methods=['POST'])
 def add_users():
@@ -125,46 +125,46 @@ def add_users():
 
   return users_schema.jsonify(new_users)
 
-# Get All Products    
-@app.route('/users', methods=['GET'])
-def get_products():
-  all_products = users.query.all()
-  result = users_schema.dump(all_products)
-  return jsonify(result) 
+# # Get All Products    
+# @app.route('/users', methods=['GET'])
+# def get_users():
+#   all_users = users.query.all()
+#   result = users_schema.dump(all_users)
+#   return jsonify(result) 
 
-# Get Single Products
-@app.route('/users/<id>', methods=['GET'])
-def get_product(id):
-  product = users.query.get(id)
-  return users_schema.jsonify(product)
+# # Get Single Products 
+# @app.route('/users/<id>', methods=['GET'])
+# def get_users(id):
+#   users = users.query.get(id)
+#   return users_schema.jsonify(users)
 
-# Update a Product
-@app.route('/users/<id>', methods=['PUT'])
-def update_users(id):
-  product = users.query.get(id)
+# # Update a Product
+# @app.route('/users/<id>', methods=['PUT'])
+# def update_users(id):
+#   product = users.query.get(id)
 
-  name = request.json['name']
-  mail = request.json['mail']
-  contact = request.json['contact']
+#   name = request.json['name']
+#   mail = request.json['mail']
+#   contact = request.json['contact']
   
 
-  users.name = name
-  users.mail = mail
-  users.contact = contact
+#   users.name = name
+#   users.mail = mail
+#   users.contact = contact
   
 
-  db.session.commit()
+#   db.session.commit()
 
-  return users_schema.jsonify(users)
+#   return users_schema.jsonify(users)
 
-# Delete Product
-@app.route('/users/<id>', methods=['DELETE'])
-def delete_users(id):
-  product = users.query.get(id)
-  db.session.delete(users)
-  db.session.commit()
+# # Delete Product
+# @app.route('/users/<id>', methods=['DELETE'])
+# def delete_users(id):
+#   users = users.query.get(id)
+#   db.session.delete(users)
+#   db.session.commit()
 
-  return users_schema.jsonify(users)
+#   return users_schema.jsonify(users)
 
 # Run Server
 if __name__ == '__main__':
